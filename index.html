@@ -4,20 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toy Drone</title>
-    <script src="drone.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="scripts/drone.js" defer></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="header">
         <h1>Toy Drone</h1>
     </div>
     <div id="content">
-        <canvas id="game">
-            
-        </canvas>
+
     </div>
     <div id="footer">
-        <button onclick="Place()">Place</button>
+        <div id="footer-placement-settings">
+            <button onclick="Place()">Place</button>
+            <label for="xcoord">X: </label>
+            <input type="number" name="xcoord" id="xcoord" min="0" max="9" placeholder="0">
+            <label for="ycoord">Y: </label>
+            <input type="number" name="ycoord" id="ycoord" min="0" max="9" placeholder="0">
+            <select name="heading" id="heading">
+                <option value="directions.north">North</option>
+                <option value="directions.east">East</option>
+                <option value="directions.south">South</option>
+                <option value="directions.west">West</option>
+            </select>
+        </div>
     </div>
 </body>
 </html>
