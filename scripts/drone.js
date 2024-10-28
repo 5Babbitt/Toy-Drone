@@ -122,31 +122,24 @@ const footer = document.getElementById("footer");
 const content = document.getElementById("content");
 const placeSettings = document.getElementById("footer-placement-settings");
 const debugElement = document.createElement("h3")
-const droneElement = document.createElement("div");
+const droneElement = CreateElementWithAttributes("div", "drone");
 
 // drone controls HTML
-const droneControlsWrapper = document.createElement("div");
-const droneMovementControlsWrapper = document.createElement("div");
-//const moveButton = document.createElement("button");
-//const leftButton = document.createElement("button");
-//const rightButton = document.createElement("button");
-//const attackButton = document.createElement("button");
-
-const moveButton = CreateElementWithID("button", "", "Move");
-const leftButton = CreateElementWithID("button", "", "Left");
-const rightButton = CreateElementWithID("button", "", "Right");
-const attackButton = CreateElementWithID("button", "", "Attack");
+const droneControlsWrapper = CreateElementWithAttributes("div", "footer-drone-controls");
+const droneMovementControlsWrapper = CreateElementWithAttributes("div", "footer-drone-controls-movement");
+const moveButton = CreateElementWithAttributes("button", "", "move-btn", "Move");
+const leftButton = CreateElementWithAttributes("button", "", "rotate-btn", "Left");
+const rightButton = CreateElementWithAttributes("button", "", "rotate-btn", "Right");
+const attackButton = CreateElementWithAttributes("button", "", "attack-btn", "Attack");
 
 // Setting Children
 header.appendChild(debugElement);
 
-// Setting ID's
-droneElement.id = "drone";
-
 let drone = null;
+let currentRotation = 0;
 
 function isValidPosition(pos) {
-  if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 9) {
+  if (pos.x < 0 || pos.x > gridSize || pos.y < 0 || pos.y > gridSize) {
     return false;
   }
 
@@ -154,24 +147,24 @@ function isValidPosition(pos) {
 }
 
 function Place(x = 0, y = 0, heading = directions.north) {
-  // check if drone already exists
-  if (drone !== null) {
-    return;
-  }
-  
   // check if spawn position is within the grid
   if (!isValidPosition(new Vector2(x, y))) {
     console.error("Invalid Place Location! Place it within the grid.");
     return;
   }
 
+  // run the first time the drone is spawned
+  if (drone === null) {
+    AddMoveControls();
+    content.appendChild(droneElement);
+  }
+
   drone = new Drone(x, y, heading);
+  currentRotation = (drone.getRotation() - 90) % 360;
+  droneElement.style.transform = `rotate(${currentRotation}deg)`;
+  
   console.log(drone);
   
-  droneElement.style.transform = `rotate(${drone?.getRotation() - 90}deg)`;
-  content.appendChild(droneElement);
-
-  AddMoveControls();
   Report();
 }
 
@@ -184,23 +177,17 @@ function Move() {
 
 function Left() {
   drone?.rotate(left);
+  currentRotation -= 90;
 
-  if (drone?.getRotation() === 0) {
-    
-  }
-
-  droneElement.style.transform = `rotate(${drone?.getRotation() - 90}deg)`;
+  droneElement.style.transform = `rotate(${currentRotation}deg)`;
   Report();
 }
 
 function Right() {
   drone?.rotate(right);
+  currentRotation += 90;
 
-  if (drone?.getRotation() === 0) {
-
-  }
-
-  droneElement.style.transform = `rotate(${drone?.getRotation() - 90}deg)`;
+  droneElement.style.transform = `rotate(${currentRotation}deg)`;
   Report();
 }
 
@@ -214,7 +201,7 @@ function Attack() {
   let attackPos = drone?.attack();
 }
 
-function CreateElementWithID(element, id = "", text = "") {
+function CreateElementWithAttributes(element = "div", id = "", elementClass = "", text = "") {
   if (typeof(element) === "undefined") {
     return false;
   }
@@ -225,6 +212,10 @@ function CreateElementWithID(element, id = "", text = "") {
     newElement.id = id;
   }
 
+  if (elementClass !== "") {
+    newElement.classList.add(elementClass)
+  }
+
   if (text !== "") {
     newElement.innerText = text;
   }
@@ -233,18 +224,16 @@ function CreateElementWithID(element, id = "", text = "") {
 }
 
 function AddMoveControls() {
-  placeSettings.remove();
-
   moveButton.onclick = function() { Move(); };
   leftButton.onclick = function() { Left(); };
   rightButton.onclick = function() { Right(); };
   attackButton.onclick = function() { Attack(); };
 
   droneControlsWrapper.appendChild(droneMovementControlsWrapper);
-  droneControlsWrapper.appendChild(attackButton);
   droneMovementControlsWrapper.appendChild(leftButton);
   droneMovementControlsWrapper.appendChild(moveButton);
   droneMovementControlsWrapper.appendChild(rightButton);
+  droneControlsWrapper.appendChild(attackButton);
 
   footer.appendChild(droneControlsWrapper);
 }
