@@ -2,8 +2,8 @@
 
 :root {
     /* Colours */
-    --bg-gradient-colour1: black;
-    --bg-gradient-colour2: midnightblue;
+    --bg-gradient-colour1: #03000f;
+    --bg-gradient-colour2: #100320;
 
     --panel-gradient-colour1: black;
     --panel-gradient-colour2: #131313;
@@ -22,13 +22,16 @@
 
 body {
     height: 100vh;
-    width: 100vw;
     overflow-y: hidden;
+    overflow-x: hidden;
     color: var(--text-colour);
-    background: repeating-radial-gradient(at 25% 75%, #03000f 0%, #100320 100%) no-repeat 0 0/200% 100%;
+    background-color: black;
+    justify-content: center;
+    align-content: center;
 }
 
 #drone {
+    position: absolute;
     width: 50px;
     height: 50px;
     border-bottom: 25px solid rgb(229, 255, 0);
@@ -42,15 +45,17 @@ body {
 .header, .footer {
     display: flex;
     left: 0;
-    padding: 2.5vh 10vw;
-    width: 100vw;
+    padding: 2vh 10vw;
+    width: 100%;
     flex-direction: row;
     background: linear-gradient(var(--panel-gradient-colour2), var(--panel-gradient-colour1));
 }
 
 .header {
-    position: relative;
+    position: fixed;
+    top: 0;
     flex-wrap: nowrap;
+    justify-content: center;
     border-bottom: 2px solid var(--accent-colour);
     box-shadow: 0 -5rem 2rem 5rem var(--accent-colour);
 }
@@ -58,7 +63,7 @@ body {
 .footer {
     flex-wrap: wrap-reverse;
     justify-content: space-between;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     border-top: 2px solid var(--accent-colour);
     box-shadow: 0 5rem 2rem 5rem var(--accent-colour);
@@ -87,5 +92,23 @@ body {
 
 .content {
     height: 100%;
-    width: 100vw;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    padding: 10%;
+    background: repeating-radial-gradient(at 25% 75%, 
+    var(--bg-gradient-colour1) 0%, var(--bg-gradient-colour2) 100%) no-repeat 0 0/200% 100%;
+}
+
+#grid-container {
+    display: grid;
+    background-color: transparent;
+}
+
+.cell {
+    border: 0.5px solid white;
 }

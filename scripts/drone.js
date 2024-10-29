@@ -16,8 +16,6 @@ class Vector2 {
 // A class that stores rotation and a Vector2 for direction
 class Heading {
   constructor(x = 0, y = 0, rotation = 90) {
-    let angle = ((Math.atan2(y, x) * 180/Math.PI) + 360) % 360;
-
     this.direction = new Vector2(x, y);
     this.rotation = rotation;
   }
@@ -70,6 +68,8 @@ class Drone {
     }
 
     this.position = dest;
+
+    return dest;
   }
 
   rotate(direction) {
@@ -86,7 +86,6 @@ class Drone {
       return;
     }
     
-    console.log(`Attacked ${attackPos.x}:${attackPos.y}`)
     // send projectile to attack pos
 
     return attackPos;
@@ -108,29 +107,52 @@ const directions = Object.freeze({
   south: new Heading(0, -1, 270)
 });
 
+const PlaceDrone = () => {
+  const x = parseInt(xInputElement.value);
+  const y = parseInt(yInputElement.value);
+  const heading = directions[directionInputElement.value];
+
+  Place(x, y, heading);
+}
+
 const directionArray = [directions.north, directions.east, directions.south, directions.west];
 const left = 1;
 const right = -1;
-
-// Grid
-const cellSize = 10;
-const gridSize = 10;
 
 // HTML References
 const header = document.getElementById("header");
 const footer = document.getElementById("footer");
 const content = document.getElementById("content");
-const placeSettings = document.getElementById("footer-placement-settings");
 const debugElement = document.createElement("h3")
 const droneElement = CreateElementWithAttributes("div", "drone");
 
-// drone controls HTML
-const droneControlsWrapper = CreateElementWithAttributes("div", "footer-drone-controls");
-const droneMovementControlsWrapper = CreateElementWithAttributes("div", "footer-drone-controls-movement");
-const moveButton = CreateElementWithAttributes("button", "", "move-btn", "Move");
-const leftButton = CreateElementWithAttributes("button", "", "rotate-btn", "Left");
-const rightButton = CreateElementWithAttributes("button", "", "rotate-btn", "Right");
-const attackButton = CreateElementWithAttributes("button", "", "attack-btn", "Attack");
+// Placement Settings HTML
+const placeSettings = document.getElementById("footer-placement-settings");
+const xInputElement = document.getElementById("x-input");
+const yInputElement = document.getElementById("y-input");
+const directionInputElement = document.getElementById("heading-input");
+
+// Drone Controls HTML
+const droneControls = CreateElementWithAttributes("div", "footer-drone-controls");
+const droneMovementControls = CreateElementWithAttributes("div", "footer-drone-controls-movement");
+const moveButton = CreateElementWithAttributes("button", "", "drone-btn", "Move");
+const leftButton = CreateElementWithAttributes("button", "", "drone-btn", "Left");
+const rightButton = CreateElementWithAttributes("button", "", "drone-btn", "Right");
+const attackButton = CreateElementWithAttributes("button", "", "drone-btn", "Attack");
+
+// Grids Settings HTML
+const gridSize = 10;
+const grid = document.getElementById("grid-container");
+const gridTop = grid.getBoundingClientRect().top;
+const gridBottom = grid.getBoundingClientRect().bottom;
+const gridLeft = grid.getBoundingClientRect().left;
+const gridRight = grid.getBoundingClientRect().right;
+
+let cellSize = 10;
+
+CreateGrid();
+
+window.addEventListener('resize', adjustGridSize)
 
 // Setting Children
 header.appendChild(debugElement);
@@ -138,18 +160,36 @@ header.appendChild(debugElement);
 let drone = null;
 let currentRotation = 0;
 
-function isValidPosition(pos) {
-  if (pos.x < 0 || pos.x > gridSize || pos.y < 0 || pos.y > gridSize) {
-    return false;
+function CreateGrid(rows = 10, cols = 10) {
+  grid.innerHTML = "";
+  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`
+  
+  for (let i = 0; i < rows * cols; i++) {
+    const cell = CreateElementWithAttributes("div", "", "cell", i)
+    grid.appendChild(cell);
   }
+  
+  adjustGridSize();
+}
 
-  return true;
+function adjustGridSize() {
+  const gridContainerSize = Math.min(window.innerWidth, window.innerHeight);
+  const cells = document.querySelectorAll(".cell");
+  cellSize = gridContainerSize / gridSize * (2/3);
+  
+  cells.forEach(cell => {
+    cell.style.width = `${cellSize}px`;
+    cell.style.height = `${cellSize}px`;
+  });
+
+  console.log("Size Adjusted")
 }
 
 function Place(x = 0, y = 0, heading = directions.north) {
   // check if spawn position is within the grid
   if (!isValidPosition(new Vector2(x, y))) {
-    console.error("Invalid Place Location! Place it within the grid.");
+    console.error("Invalid Placement Location! Place it within the grid.");
     return;
   }
 
@@ -169,8 +209,14 @@ function Place(x = 0, y = 0, heading = directions.north) {
 }
 
 function Move() {
-  drone?.move();
+  const moveDistance = cellSize;
+  
+  const movePos = drone?.move();
 
+  const newLeft = gridLeft + movePos.scale(moveDistance).x;
+  const newBottom = gridBottom + movePos.scale(moveDistance).y;
+
+  SetDronePosition(movePos.scale(moveDistance).x, -movePos.scale(moveDistance).y);
 
   Report();
 }
@@ -199,6 +245,12 @@ function Report() {
 
 function Attack() { 
   let attackPos = drone?.attack();
+  
+  console.log(`Attacked ${attackPos.x}:${attackPos.y}`)
+}
+
+function SetDronePosition(x, y) {
+  droneElement.style.transform = `translate(${x}px, ${y}px)`
 }
 
 function CreateElementWithAttributes(element = "div", id = "", elementClass = "", text = "") {
@@ -229,11 +281,19 @@ function AddMoveControls() {
   rightButton.onclick = function() { Right(); };
   attackButton.onclick = function() { Attack(); };
 
-  droneControlsWrapper.appendChild(droneMovementControlsWrapper);
-  droneMovementControlsWrapper.appendChild(leftButton);
-  droneMovementControlsWrapper.appendChild(moveButton);
-  droneMovementControlsWrapper.appendChild(rightButton);
-  droneControlsWrapper.appendChild(attackButton);
+  droneControls.appendChild(droneMovementControls);
+  droneMovementControls.appendChild(leftButton);
+  droneMovementControls.appendChild(moveButton);
+  droneMovementControls.appendChild(rightButton);
+  droneControls.appendChild(attackButton);
 
-  footer.appendChild(droneControlsWrapper);
+  footer.appendChild(droneControls);
+}
+
+function isValidPosition(pos) {
+  if (pos.x < 0 || pos.x >= gridSize || pos.y < 0 || pos.y >= gridSize) {
+    return false;
+  }
+
+  return true;
 }
