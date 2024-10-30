@@ -100,7 +100,6 @@ body {
     flex-direction: row;
     gap: 2rem;
     justify-content: space-around;
-
 }
 
 .footer-drone-controls-movement {
@@ -108,7 +107,7 @@ body {
     flex-wrap: nowrap;
     flex-direction: row;
     gap: 1rem;
-    justify-content: center;
+    justify-content: space-around;
 }
 
 .content {
