@@ -11,7 +11,7 @@
     --accent-colour: rgb(0, 255, 242);
     --bullet-colour: aqua;
 
-    --border-colour: rgba(70, 70, 70, 0.35);
+    --border-colour: rgba(70, 70, 70, 0.75);
 
     --text-colour: whitesmoke;
 }
@@ -54,12 +54,38 @@ body {
 }
 
 .footer {
+    font-family: "Comfortaa", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
     flex-wrap: wrap-reverse;
     justify-content: space-between;
     position: fixed;
     bottom: 0;
     border-top: 2px solid var(--accent-colour);
     box-shadow: 0 5rem 2rem 5rem var(--accent-colour);
+}
+
+.drone-btn, #x-input, #y-input, #heading-input {
+    background: repeating-radial-gradient(at 25% 75%, #424242 0%, #121212 100%);
+    color: var(--text-colour);
+    height: 30px;
+    width: 60px;
+    border-radius: 20%;
+    border: 2px solid var(--accent-colour);
+    box-shadow: 0 0 5px 1px var(--accent-colour);
+}
+
+.drone-btn {
+    background-color: black;
+}
+
+#x-input, #y-input {
+    color: var(--text-colour);
+}
+
+#heading-input {
+    color: var(--text-colour);
 }
 
 .footer-placement-settings {
@@ -84,7 +110,8 @@ body {
 }
 
 .content {
-    height: 100vh;
+    overflow: hidden;
+    height: calc(100vh - (1.25vh * 2) - 60px);
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -93,8 +120,7 @@ body {
     align-content: center;
     align-items: center;
     padding: 10%;
-    background: repeating-radial-gradient(at 25% 75%, 
-    var(--bg-gradient-colour1) 0%, var(--bg-gradient-colour2) 100%) no-repeat 0 0/200% 100%;
+    background: radial-gradient(ellipse at bottom, var(--bg-gradient-colour2) 0%, var(--bg-gradient-colour1) 100%)
 }
 
 .grid {
@@ -152,4 +178,9 @@ body {
         transform: scale(0);
         opacity: 0;
     }
+}
+
+.stars {
+    position: absolute;
+    background: transparent;
 }

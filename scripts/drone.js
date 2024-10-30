@@ -73,9 +73,9 @@ class Drone {
 
   // Get the element position and rotation used for element transform
   getElementTransform() {
-    let x = this.position.scale(CellSize()).x;
-    let y = this.position.scale(-CellSize()).y;
-    let rot = this.elementRotation;
+    const x = this.position.scale(CellSize()).x;
+    const y = this.position.scale(-CellSize()).y;
+    const rot = this.elementRotation;
     
     return `translate(${x}px, ${y}px) rotate(${rot}deg)`;
   }
@@ -138,7 +138,11 @@ const GridRect = () => {
 
 const CellSize = () => {
   const content = document.getElementById("content");
-  const gridContainerSize = Math.min(window.innerWidth, content.getBoundingClientRect().height);
+  const headerHeight = document.getElementById("header").offsetHeight;
+  const footerHeight = document.getElementById("footer").offsetHeight;
+  const availableHeight = window.innerHeight - headerHeight - footerHeight;
+
+  const gridContainerSize = Math.min(window.innerWidth, availableHeight);
   return gridContainerSize / gridSize * (4/5);
 };
 
@@ -332,3 +336,61 @@ function isValidPosition(pos) {
 
   return true;
 }
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const stars = [];
+
+function InitStars() {
+  stars.length = 0;
+  const canvas = document.getElementById("stars");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  for (let i = 0; i < 150; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random(),
+      speed: Math.random() * 0.25 + 0.05
+    });
+  }
+}
+
+function DrawStars() {
+  const canvas = document.getElementById("stars");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const star of stars) {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.closePath();
+
+    star.y -= star.speed;
+
+    if (star.y < 0) {
+      star.y = canvas.height;
+    }
+  }
+
+  requestAnimationFrame(DrawStars);
+}
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  InitStars();
+})
+
+InitStars();
+DrawStars();
