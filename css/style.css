@@ -91,6 +91,7 @@ body {
 
 .footer-placement-settings {
     flex-direction: row;
+    justify-content: space-around;
 }
 
 .footer-drone-controls {
@@ -98,7 +99,7 @@ body {
     flex-wrap: nowrap;
     flex-direction: row;
     gap: 2rem;
-    justify-content: space-evenly;
+    justify-content: space-around;
 
 }
 
