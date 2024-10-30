@@ -42,7 +42,8 @@ class Drone {
     this.heading = heading;
 
     if (document.getElementById("drone") === null) { 
-      this.element = CreateElementWithAttributes("div", "drone", "drone", "|");
+      this.element = CreateElementWithAttributes("img", "drone", "drone");
+      this.element.setAttribute("src", "./img/drone.svg")
     }
     else {
       this.element = document.getElementById("drone");
@@ -90,6 +91,27 @@ class Drone {
     return dest;
   }
 
+  newMove() {
+    const dest = dronePosition.translate(droneHeading.direction);
+
+    if (!isValidPosition(dest)) {
+      console.error("Invalid Destination!")
+      return;
+    }
+
+    dronePosition = dest;
+
+    return dest;
+  }
+
+  newRot(direction) {
+    const currentIndex = directionArray.indexOf(droneHeading);
+    const newIndex = (currentIndex - direction + directionArray.length) % directionArray.length;
+
+    droneHeading = directionArray[newIndex];
+    droneRotation -= direction * 90;
+  }
+
   rotate(direction) {
     const currentIndex = directionArray.indexOf(this.heading);
     const newIndex = (currentIndex - direction + directionArray.length) % directionArray.length;
@@ -121,17 +143,21 @@ class Drone {
   }
 }
 
-// Grids Settings HTML
-const gridSize = 10;
-
-let drone = null;
-
 const directions = Object.freeze({
   west: new Heading(-1, 0, 0),
   north: new Heading(0, 1, 90),
   east: new Heading(1, 0, 180),
   south: new Heading(0, -1, 270)
 });
+
+// Grids Settings
+const gridSize = 10;
+
+// Drone Settings
+let drone = null;
+let dronePosition = new Vector2(0, 0);
+let droneHeading = directions.north;
+let droneRotation = 0;
 
 const directionArray = [
   directions.north, 

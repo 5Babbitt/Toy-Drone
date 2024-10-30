@@ -107,15 +107,14 @@ body {
     transform: rotateX(180deg);
 }
 
+.drone {
+    position: absolute;
+    transition: 0.3s;
+}
+
 .bullet {
     position: absolute;
     border-radius: 50%;
     background-color: yellow;
     transition: 0.5s;
-}
-
-.drone {
-    position: absolute;
-    background-color: green;
-    transition: 0.3s;
 }
