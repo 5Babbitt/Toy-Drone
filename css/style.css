@@ -30,18 +30,6 @@ body {
     align-content: center;
 }
 
-#drone {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    border-bottom: 25px solid rgb(229, 255, 0);
-    border-top: 25px solid transparent;
-    border-left: 25px solid transparent;
-    border-right: 25px solid transparent;
-    transform: rotate(0deg);
-    transition: transform 0.25s ease;
-}
-
 .header, .footer {
     display: flex;
     left: 0;
@@ -69,11 +57,11 @@ body {
     box-shadow: 0 5rem 2rem 5rem var(--accent-colour);
 }
 
-#footer-placement-settings {
+.footer-placement-settings {
     flex-direction: row;
 }
 
-#footer-drone-controls {
+.footer-drone-controls {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
@@ -82,17 +70,17 @@ body {
 
 }
 
-#footer-drone-controls-movement {
+.footer-drone-controls-movement {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 1rem;
     justify-content: center;
 }
 
 .content {
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -104,11 +92,30 @@ body {
     var(--bg-gradient-colour1) 0%, var(--bg-gradient-colour2) 100%) no-repeat 0 0/200% 100%;
 }
 
-#grid-container {
+.grid {
     display: grid;
+    grid-auto-flow: column;
     background-color: transparent;
+    transform: rotateX(180deg);
 }
 
 .cell {
+    display: flex;
     border: 0.5px solid white;
+    justify-content: center;
+    align-content: center;
+    transform: rotateX(180deg);
+}
+
+.bullet {
+    position: absolute;
+    border-radius: 50%;
+    background-color: yellow;
+    transition: 0.5s;
+}
+
+.drone {
+    position: absolute;
+    background-color: green;
+    transition: 0.3s;
 }
