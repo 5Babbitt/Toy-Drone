@@ -151,8 +151,15 @@ const IsDroneSpawned = () => {
 }
 
 // Events
-window.addEventListener('resize', () => {AdjustGridSize()})
-window.addEventListener('DOMContentLoaded', () => {CreateGrid()})
+window.addEventListener('resize', () => {
+  AdjustGridSize();
+  InitStars();
+})
+window.addEventListener('DOMContentLoaded', () => {
+  CreateGrid();
+  InitStars();
+  DrawStars();
+})
 
 function CreateGrid(rows = 10, cols = 10) {
   const grid = document.getElementById("grid");
@@ -392,9 +399,6 @@ window.addEventListener("resize", () => {
   InitStars();
 })
 
-InitStars();
-DrawStars();
-
 // Arrow key controls 
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
@@ -407,7 +411,7 @@ document.addEventListener("keydown", (event) => {
     case ("ArrowRight"):
       Right();
       break;
-    case ("Space"):
+    case ("ArrowDown"):
       Attack();
       break;
     case ("Enter"):
