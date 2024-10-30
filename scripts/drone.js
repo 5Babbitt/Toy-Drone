@@ -394,3 +394,24 @@ window.addEventListener("resize", () => {
 
 InitStars();
 DrawStars();
+
+// Arrow key controls 
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case ("ArrowUp"):
+      Move();
+      break;
+    case ("ArrowLeft"):
+      Left();
+      break;
+    case ("ArrowRight"):
+      Right();
+      break;
+    case ("Space"):
+      Attack();
+      break;
+    case ("Enter"):
+      Place();
+      break;
+  }
+});

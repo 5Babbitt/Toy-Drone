@@ -84,7 +84,8 @@ body {
     color: var(--text-colour);
 }
 
-#heading-input {
+#heading-input option{
+    background-color: black;
     color: var(--text-colour);
 }
 
