@@ -41,18 +41,20 @@ class Drone {
     this.position = new Vector2(x, y);
     this.heading = heading;
 
+    // Check if the drone element exists
     if (document.getElementById("drone") === null) { 
       this.element = CreateElementWithAttributes("img", "drone", "drone");
-      this.element.setAttribute("src", "./img/drone.svg")
+      this.element.setAttribute("src", "./img/Drone.svg")
     }
     else {
       this.element = document.getElementById("drone");
     }
 
+    // Calculate rotation of the element based on the heading
     this.elementRotation = (this.heading.rotation - 90) % 360;
   }
   
-  // Getters (I'm sure these are redundant but it's a simple habit from C, C++, C#)
+  // Getters (I'm sure these aren't necessary but it's a simple habit from C, C++, C#)
   getPosition() {
     return this.position;
   }
@@ -87,29 +89,7 @@ class Drone {
     }
 
     this.position = dest;
-
     return dest;
-  }
-
-  newMove() {
-    const dest = dronePosition.translate(droneHeading.direction);
-
-    if (!isValidPosition(dest)) {
-      console.error("Invalid Destination!")
-      return;
-    }
-
-    dronePosition = dest;
-
-    return dest;
-  }
-
-  newRot(direction) {
-    const currentIndex = directionArray.indexOf(droneHeading);
-    const newIndex = (currentIndex - direction + directionArray.length) % directionArray.length;
-
-    droneHeading = directionArray[newIndex];
-    droneRotation -= direction * 90;
   }
 
   rotate(direction) {
@@ -127,19 +107,8 @@ class Drone {
       console.warn("Invalid attack target!");
       return;
     }
-    
-    // send projectile to attack pos
 
     return attackPos;
-  }
-
-  report() {
-    const posMsg = `Position: ${this.position.x},${this.position.y}`;
-    const headingMsg = `Heading: ${this.heading.getName()}`;
-    const rotMsg = `Rotation: ${this.getRotation()}`;
-
-    let msg = `${posMsg}  ${headingMsg}  ${rotMsg}`;
-    return msg;
   }
 }
 
@@ -155,9 +124,6 @@ const gridSize = 10;
 
 // Drone Settings
 let drone = null;
-let dronePosition = new Vector2(0, 0);
-let droneHeading = directions.north;
-let droneRotation = 0;
 
 const directionArray = [
   directions.north, 
@@ -181,14 +147,8 @@ const IsDroneSpawned = () => {
 }
 
 // Events
-window.addEventListener('resize', AdjustGridSize)
-window.addEventListener('DOMContentLoaded', () => {
-  // Setting Children
-  const header = document.getElementById("header");
-  const debugElement = CreateElementWithAttributes("h3", "debug");
-  header.appendChild(debugElement);
-  CreateGrid();
-})
+window.addEventListener('resize', () => {AdjustGridSize()})
+window.addEventListener('DOMContentLoaded', () => {CreateGrid()})
 
 function CreateGrid(rows = 10, cols = 10) {
   const grid = document.getElementById("grid");
@@ -199,7 +159,7 @@ function CreateGrid(rows = 10, cols = 10) {
   
   for (let i = 0; i < rows * cols; i++) {
     const cellID = i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})
-    const cell = CreateElementWithAttributes("div", `cell-${cellID}`, "cell", cellID)
+    const cell = CreateElementWithAttributes("div", `cell-${cellID}`, "cell")
     grid.appendChild(cell);
   }
   
@@ -215,11 +175,9 @@ function AdjustGridSize() {
   });
   
   if (IsDroneSpawned()) {
-    drone.element.style.width = `${CellSize() * 0.9}px`
-    drone.element.style.height = `${CellSize() * 0.9}px`
+    drone.element.style.width = `${CellSize()}px`
+    drone.element.style.height = `${CellSize()}px`
   }
-  
-  console.log("Size Adjusted")
 }
 
 function Place() {
@@ -274,17 +232,50 @@ function Right() {
 }
 
 function Report() {
-  const debugElement = document.getElementById("debug");
-  let msg = drone.report();
-
-  debugElement.innerText = msg;
-  console.log(drone.report())
+  const posMsg = `Position: ${drone.getPosition().x},${drone.getPosition().y}`;
+  const headingMsg = `Heading: ${drone.getHeading()}`;
+  const rotMsg = `Rotation: ${drone.getRotation()}`;
+  const msg = `${posMsg}  ${headingMsg}  ${rotMsg}`;
+  console.log(msg);
 }
 
 function Attack() { 
-  let attackPos = drone?.attack();
+  const attackPos = drone?.attack();
+
+  const projectile = CreateElementWithAttributes("div", "", "bullet");
+  const cell = document.getElementById(`cell-00`);
+
+  const startX = drone.getPosition().scale(CellSize()).x;
+  const startY = drone.getPosition().scale(-CellSize()).y;
+
+  projectile.style.transform = `translate(${startX}px, ${startY}px)`
+
+  cell.appendChild(projectile);
+
+  const x = attackPos.scale(CellSize()).x;
+  const y = attackPos.scale(-CellSize()).y;
+
+  projectile.style.width = `${CellSize()/8}px`;
+  projectile.style.height = `${CellSize()/8}px`;
+  projectile.style.transform = `translate(${x}px, ${y}px)`
   
   console.log(`Attacked ${attackPos.x}:${attackPos.y}`)
+
+  setTimeout(() => {
+    const explosion = CreateElementWithAttributes("div", "", "explosion");
+    //explosion.style.transform = `translate(${x}px, ${y}px)`;
+    explosion.style.width = `${CellSize()}px`;
+    explosion.style.height = `${CellSize()}px`;
+    const explodeCell = document.getElementById(`cell-${attackPos.x}${attackPos.y}`)
+
+    explodeCell.appendChild(explosion);
+
+    projectile.remove();
+
+    setTimeout(() => {
+      explosion.remove();
+    }, 500);
+  }, 250);
 }
 
 function CreateElementWithAttributes(element = "div", id = "", elementClass = "", text = "") {

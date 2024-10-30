@@ -9,6 +9,9 @@
     --panel-gradient-colour2: #131313;
 
     --accent-colour: rgb(0, 255, 242);
+    --bullet-colour: aqua;
+
+    --border-colour: rgba(70, 70, 70, 0.35);
 
     --text-colour: whitesmoke;
 }
@@ -33,13 +36,15 @@ body {
 .header, .footer {
     display: flex;
     left: 0;
-    padding: 2vh 10vw;
+    padding: 1.25vh 10vw;
     width: 100%;
     flex-direction: row;
     background: linear-gradient(var(--panel-gradient-colour2), var(--panel-gradient-colour1));
 }
 
 .header {
+    font-family: "Bebas Neue", serif;
+    font-size: x-large;
     position: fixed;
     top: 0;
     flex-wrap: nowrap;
@@ -100,10 +105,17 @@ body {
 }
 
 .cell {
+    font-family: "Dosis", serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
     display: flex;
-    border: 0.5px solid white;
+    border: 1px solid;
+    font-size: 0.5em;
+    border-color: var(--border-colour);
+    columns: var(--border-colour);
+    align-items: center;
     justify-content: center;
-    align-content: center;
     transform: rotateX(180deg);
 }
 
@@ -115,6 +127,29 @@ body {
 .bullet {
     position: absolute;
     border-radius: 50%;
-    background-color: yellow;
-    transition: 0.5s;
+    background-color: var(--bullet-colour);
+    transition: 0.25s linear;
+}
+
+.explosion {
+    position: absolute;
+    background-color: var(--accent-colour);
+    border-radius: 50%;
+    box-shadow: 0 0 1rem 0.5rem var(--accent-colour);
+    animation: explode 0.5s forwards;
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
 }
